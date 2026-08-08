@@ -1,0 +1,23 @@
+{
+  "name": "Forest",
+  "mode": "dark",
+  "colors": {
+    "bg_main": "#0C130F",
+    "bg_surface": "#111A13",
+    "bg_sidebar": "#0E1611",
+    "bg_header": "#101811",
+    "bg_card": "#152019",
+    "bg_input": "#152019",
+    "bg_hover": "#1A2B1D",
+    "bg_chip": "#162418",
+    "text_primary": "#E8F5EA",
+    "text_secondary": "#7EA885",
+    "text_muted": "#3D6344",
+    "accent": "#22C55E",
+    "accent_hover": "#16A34A",
+    "success": "#86EFAC",
+    "warning": "#F59E0B",
+    "danger": "#EF4444",
+    "border": "#1E3322"
+  }
+}

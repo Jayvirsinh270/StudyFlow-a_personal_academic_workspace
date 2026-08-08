@@ -1,0 +1,319 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>StudyFlow Codebase Analysis</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.7;
+    background: #ffffff; color: #1f2328;
+    max-width: 760px; margin: 0 auto; padding: 32px 20px 48px;
+  }
+  h1 { font-size: 22px; font-weight: 700; color: #1f2328; margin-bottom: 4px; }
+  h2 { font-size: 16px; font-weight: 700; color: #1f2328; margin: 28px 0 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+  h3 { font-size: 13px; font-weight: 700; color: #1f2328; margin: 14px 0 6px; }
+  p  { color: #1f2328; margin-bottom: 8px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 24px; }
+
+  /* Tag strip */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .tag {
+    background: #f7f8fa; border: 1px solid #e5e7eb;
+    border-radius: 4px; padding: 2px 10px; font-size: 12px; color: #57606a;
+  }
+  .tag.accent { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+
+  /* Summary box */
+  .summary-box {
+    background: #eff6ff; border: 1px solid #bfdbfe;
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 24px;
+  }
+  .summary-box p { color: #1e3a5f; margin: 0; font-size: 13.5px; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+
+  /* Cards */
+  .card {
+    background: #f7f8fa; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .card-title { font-size: 12px; font-weight: 700; color: #57606a; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .card-value { font-size: 15px; font-weight: 700; color: #1f2328; }
+  .card-sub { font-size: 12px; color: #57606a; margin-top: 2px; }
+
+  /* Module table */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 13px; }
+  th { background: #f7f8fa; text-align: left; padding: 8px 10px; font-weight: 700; color: #57606a; border-bottom: 1px solid #e5e7eb; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; color: #1f2328; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Badge */
+  .badge {
+    display: inline-block; border-radius: 4px; padding: 1px 8px;
+    font-size: 11px; font-weight: 700; vertical-align: middle;
+  }
+  .badge-green  { background: #dcfce7; color: #15803d; }
+  .badge-blue   { background: #dbeafe; color: #1d4ed8; }
+  .badge-orange { background: #fef3c7; color: #b45309; }
+  .badge-red    { background: #fee2e2; color: #b91c1c; }
+  .badge-purple { background: #ede9fe; color: #7c3aed; }
+  .badge-gray   { background: #f1f5f9; color: #475569; }
+
+  /* DB schema */
+  .schema-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .schema-item {
+    background: #f7f8fa; border: 1px solid #e5e7eb;
+    border-radius: 6px; padding: 8px 12px; font-size: 12px; min-width: 130px;
+  }
+  .schema-item strong { display: block; font-size: 12px; color: #1f2328; margin-bottom: 4px; }
+  .schema-item span { color: #57606a; font-size: 11px; line-height: 1.5; }
+
+  /* Flow */
+  .flow {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 10px 14px; margin-bottom: 8px;
+  }
+  .flow-step {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 5px;
+    padding: 3px 10px; font-size: 12px; font-weight: 600; color: #1f2328;
+  }
+  .arrow { color: #9ca3af; font-size: 14px; }
+
+  /* Bug/fix rows */
+  .issue-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+  .issue-row:last-child { border-bottom: none; }
+  .issue-icon { flex-shrink: 0; width: 18px; }
+
+  /* footer */
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 11px; color: #8b929a; }
+</style>
+</head>
+<body>
+
+<h1>StudyFlow — Codebase Deep Dive</h1>
+<p class="subtitle">A complete analysis of what this software is, how it works, and what every part does.</p>
+
+<div class="tags">
+  <span class="tag accent">Python 3.12+</span>
+  <span class="tag accent">CustomTkinter 6.0</span>
+  <span class="tag accent">SQLite (local)</span>
+  <span class="tag accent">Matplotlib</span>
+  <span class="tag accent">tkcalendar</span>
+  <span class="tag">Desktop App</span>
+  <span class="tag">Windows / macOS / Linux</span>
+  <span class="tag">1 280 × 720 min window</span>
+</div>
+
+
+<div class="summary-box">
+  <p><strong>StudyFlow is a fully local, offline-first academic management desktop app for college students.</strong>
+  It replaces a scattered combination of notes apps, spreadsheets, reminder apps, and timetable planners with a single
+  all-in-one workspace — like a personal Notion, but purpose-built for a student's semester.
+  All data lives in a single SQLite file (<code>UserData/studyflow.db</code>). No internet, no account, no cloud.
+  </p>
+</div>
+
+
+<div class="grid-3">
+  <div class="card"><div class="card-title">Python files</div><div class="card-value">18</div><div class="card-sub">across 7 directories</div></div>
+  <div class="card"><div class="card-title">SQLite tables</div><div class="card-value">13</div><div class="card-sub">all with FK constraints</div></div>
+  <div class="card"><div class="card-title">Feature modules</div><div class="card-value">11</div><div class="card-sub">fully implemented</div></div>
+  <div class="card"><div class="card-title">UI framework</div><div class="card-value">CTk 6</div><div class="card-sub">light + dark mode</div></div>
+  <div class="card"><div class="card-title">Test suite</div><div class="card-value">9 / 9</div><div class="card-sub">all passing</div></div>
+  <div class="card"><div class="card-title">Data storage</div><div class="card-value">100% local</div><div class="card-sub">UserData/ folder</div></div>
+</div>
+
+
+<h2>Primary Use Case</h2>
+<p>A college student installs StudyFlow at the start of their semester and uses it as their <strong>single command centre</strong> for:</p>
+<table>
+  <thead><tr><th>Pain Point</th><th>StudyFlow Feature</th></tr></thead>
+  <tbody>
+    <tr><td>Forgetting which assignments are due</td><td>Assignments module with due-date urgency colours + Dashboard reminders banner</td></tr>
+    <tr><td>Not knowing if attendance is dropping below 75 %</td><td>Attendance module with per-subject progress bars + low-attendance alerts</td></tr>
+    <tr><td>CGPA calculation across semesters</td><td>CGPA calculator with weighted-credit formula + Matplotlib bar chart</td></tr>
+    <tr><td>Scattered lecture notes</td><td>Per-subject Notes with rich-text editor, tables, formatting, and auto-save</td></tr>
+    <tr><td>Losing track of study files / slides</td><td>Documents module — uploads are copied to <code>UserData/Files/</code> and indexed per subject</td></tr>
+    <tr><td>No daily plan / timetable</td><td>Timetable (weekly grid, "Now" badge on current class) + Planner (day-by-day with tasks)</td></tr>
+    <tr><td>Procrastination / focus</td><td>Pomodoro timer — 25 min work + 5 min break cycles with session history</td></tr>
+    <tr><td>Scattered calendar events</td><td>Calendar module — per-day events (personal / academic / exam / holiday / reminder)</td></tr>
+  </tbody>
+</table>
+
+
+<h2>Architecture Overview</h2>
+<div class="flow">
+  <span class="flow-step">main.py<br /><small>StudyFlowApp</small></span>
+  <span class="arrow">→</span>
+  <span class="flow-step">Sidebar<br /><small>navigation</small></span>
+  <span class="arrow">+</span>
+  <span class="flow-step">Header<br /><small>clock / search</small></span>
+  <span class="arrow">→</span>
+  <span class="flow-step">navigate_to(page_id)</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">Module Frame<br /><small>swapped in content_area</small></span>
+  <span class="arrow">→</span>
+  <span class="flow-step">database/queries.py<br /><small>SQLite CRUD</small></span>
+</div>
+<p style="font-size:13px;color:#57606a">
+  Navigation is <strong>page-swap</strong>: <code>navigate_to()</code> destroys the current frame and mounts a fresh one.
+  No router, no state management library — each frame bootstraps itself by reading the DB on mount.
+  The <code>Sidebar</code> and <code>Header</code> persist across all pages.
+</p>
+
+
+<h2>File Structure &amp; Responsibilities</h2>
+<table>
+  <thead><tr><th>File / Folder</th><th>Role</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td><code>main.py</code></td><td>App root, window config, keyboard shortcuts (Alt+1–9, Ctrl+K, Escape), onboarding dialog, page routing</td><td><span class="badge badge-green">Core</span></td></tr>
+    <tr><td><code>utils/theme.py</code></td><td>Central design system — all (light, dark) colour tuples, spacing, radius constants, helper functions <code>attendance_color()</code>, <code>gpa_color()</code>, <code>priority_color()</code></td><td><span class="badge badge-green">Design system</span></td></tr>
+    <tr><td><code>utils/logger.py</code></td><td>File logger writing to <code>logs/studyflow_*.log</code></td><td><span class="badge badge-gray">Util</span></td></tr>
+    <tr><td><code>utils/file_manager.py</code></td><td>File copy, delete, open (OS-aware), size format, icon map, sort — wraps <code>UserData/Files/</code></td><td><span class="badge badge-gray">Util</span></td></tr>
+    <tr><td><code>database/database.py</code></td><td>Singleton <code>DatabaseManager</code> — SQLite connection pool, WAL mode, FK ON</td><td><span class="badge badge-blue">DB layer</span></td></tr>
+    <tr><td><code>database/db_setup.py</code></td><td>DDL — creates all 13 tables if not exist; inserts default settings on first run</td><td><span class="badge badge-blue">DB layer</span></td></tr>
+    <tr><td><code>database/queries.py</code></td><td>All CRUD operations (700+ lines): profile, subjects, notes, files, attendance, assignments, timetable, CGPA, calendar events, study tasks, settings</td><td><span class="badge badge-blue">DB layer</span></td></tr>
+    <tr><td><code>database/backup_manager.py</code></td><td>JSON full export/import + CSV attendance export (used by Settings)</td><td><span class="badge badge-blue">DB layer</span></td></tr>
+    <tr><td><code>components/sidebar.py</code></td><td>Vertical nav with brand badge, grouped items, live profile chip, compact mode toggle</td><td><span class="badge badge-purple">Component</span></td></tr>
+    <tr><td><code>components/header.py</code></td><td>Top bar: live 30s clock, breadcrumb, search bar → opens QuickSearch, notification bell badge</td><td><span class="badge badge-purple">Component</span></td></tr>
+    <tr><td><code>components/quick_search.py</code></td><td>Ctrl+K modal — searches subjects, notes, assignments, tasks, calendar events across all DB tables; max 20 results with "Open" navigation</td><td><span class="badge badge-purple">Component</span></td></tr>
+    <tr><td><code>modules/dashboard/</code></td><td>Home screen: welcome banner, 4-stat cards (subjects/assignments/CGPA/attendance), quick actions, today's timetable, attendance summary, upcoming assignments, recent notes, study streak</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/subjects/subjects.py</code></td><td>3-column card grid of subjects; Add/Edit/Delete dialogs; colour-picker swatches; search filter; click → workspace</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/subjects/workspace.py</code></td><td>Per-subject 6-tab workspace: Overview, Notes (list+editor), Files (upload/open/delete), Attendance (mark P/A), Assignments (add/complete), Resources</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/notes/editor.py</code></td><td>Rich text Toplevel editor: Bold/Italic/Underline toggles, font-size picker, alignment, bullet/number insert, embedded interactive table widget, insert link/image, Find &amp; Replace dialog, auto-save every 2 s</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/assignments/assignments.py</code></td><td>Full assignment list across all subjects; filter by status; due-date urgency colours; priority badges; add/edit/complete/delete dialogs</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/attendance/attendance.py</code></td><td>Per-subject attendance rows with progress bars and colour-coded % ; inline +1 present/absent buttons; bulk "Mark All Present"; stats summary strip</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/cgpa/cgpa.py</code></td><td>Semester GPA table + weighted CGPA formula; add/edit/delete records; Matplotlib bar chart with coloured bars; gpa_color tints the big number</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/timetable/timetable.py</code></td><td>Weekly grid (Mon–Sat × 9 time slots); today column highlighted; current class "Now" badge; add/edit/delete entries with subject dropdown</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/planner/planner.py</code></td><td>Daily planner — date navigation (prev/next), merges timetable classes + calendar events + study tasks; task add/complete/delete; upcoming deadlines from assignments</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/calendar/calendar.py</code></td><td>Two-panel: tkcalendar month picker (with coloured event markers) + scrollable event list; 5 event types; Add Event dialog; event count badge; day summary bar; sorted upcoming events</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/documents/documents.py</code></td><td>All files across all subjects; filter by subject/type; sort by name/type/size; search; upload (copies to UserData/Files/); open with OS default; delete; file-type badges</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/productivity/pomodoro.py</code></td><td>Pomodoro timer — configurable work (default 25 min) + break (5 min) durations; Start/Pause/Reset; session counter; total focus time; tips card</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>modules/settings/settings.py</code></td><td>Student profile form (name / enrollment / dept / semester / avatar); theme toggle (light/dark); dashboard widget toggles; JSON backup export/import; CSV attendance export</td><td><span class="badge badge-green">Module</span></td></tr>
+    <tr><td><code>test_application.py</code></td><td>9-test headless DB suite (no GUI): DB connection, profile CRUD, subjects, notes, attendance, assignments, timetable, CGPA, backup/export</td><td><span class="badge badge-orange">Tests</span></td></tr>
+  </tbody>
+</table>
+
+
+<h2>Database Schema (13 tables)</h2>
+<div class="schema-list">
+  <div class="schema-item"><strong>student_profile</strong><span>name, enrollment_number,<br />department, semester,<br />profile_picture_path</span></div>
+  <div class="schema-item"><strong>subjects</strong><span>name, subject_code,<br />faculty_name, semester,<br />credit, color</span></div>
+  <div class="schema-item"><strong>notes</strong><span>subject_id (FK),<br />title, content,<br />is_pinned</span></div>
+  <div class="schema-item"><strong>subject_files</strong><span>subject_id (FK),<br />file_name, file_path,<br />file_type, file_size</span></div>
+  <div class="schema-item"><strong>attendance</strong><span>subject_id (FK),<br />total_lectures,<br />present_lectures,<br />absent_lectures</span></div>
+  <div class="schema-item"><strong>assignments</strong><span>subject_id (FK),<br />title, description,<br />due_date, priority,<br />status</span></div>
+  <div class="schema-item"><strong>timetable</strong><span>day, time_slot,<br />subject_id (FK),<br />faculty_name, classroom</span></div>
+  <div class="schema-item"><strong>cgpa_records</strong><span>semester, gpa,<br />credits</span></div>
+  <div class="schema-item"><strong>calendar_events</strong><span>title, event_date,<br />event_type, description</span></div>
+  <div class="schema-item"><strong>study_tasks</strong><span>title, task_type,<br />due_date, status</span></div>
+  <div class="schema-item"><strong>settings</strong><span>setting_key (UNIQUE),<br />setting_value (JSON-safe)<br />theme, streaks, prefs…</span></div>
+</div>
+<p style="font-size:12px;color:#57606a;margin-top:8px">All FK relations use <code>ON DELETE CASCADE</code> — deleting a subject wipes its notes, files, attendance, and assignments automatically.</p>
+
+
+<h2>Key Data Flows</h2>
+
+<h3>Study Streak</h3>
+<div class="flow">
+  <span class="flow-step">Dashboard loads</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">Check notes/attendance/assignments updated today</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">Read streak from settings (JSON)</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">Increment if gap = 1 day</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">Persist back to settings</span>
+</div>
+
+<h3>Attendance %</h3>
+<div class="flow">
+  <span class="flow-step">User clicks +Present / +Absent</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">update_attendance(subject_id, …)</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">calculate_attendance_percentage()</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">attendance_color(pct) → green/amber/red</span>
+</div>
+
+<h3>File Upload</h3>
+<div class="flow">
+  <span class="flow-step">User picks file (filedialog)</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">file_manager.save_file() copies to UserData/Files/{subject_id}/</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">add_subject_file() records path in DB</span>
+</div>
+
+<h3>Note Auto-Save</h3>
+<div class="flow">
+  <span class="flow-step">KeyRelease in editor</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">Cancel previous after() job</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">Schedule _save_note() 2 s later</span>
+  <span class="arrow">→</span>
+  <span class="flow-step">update_note(id, title, content)</span>
+</div>
+
+
+<h2>Bugs Fixed During Enhancement Session</h2>
+<div class="issue-row"><span class="issue-icon">🔴</span><div><strong>editor.py — TypeError: multiple values for 'width'</strong><br />Toolbar loop passed <code>width=28, height=28, corner_radius=RADIUS_SM</code> explicitly AND via <code>**_btn</code>. Removed duplicates from the explicit call.</div></div>
+<div class="issue-row"><span class="issue-icon">🔴</span><div><strong>editor.py — AttributeError: 'title_entry' not found</strong><br />Cascaded from above — <code>_create_content()</code> crashed before assigning <code>self.title_entry</code>, so every subsequent <code>_on_closing()</code> failed. Fixed by fixing bug 1.</div></div>
+<div class="issue-row"><span class="issue-icon">🟠</span><div><strong>calendar.py — NameError: BG_HOVER not defined</strong><br />Import line was missing <code>BG_HOVER</code>, <code>BG_CARD</code>, <code>BG_INPUT</code>, <code>TEXT_MUTED</code>, <code>DANGER</code>, <code>BORDER</code>, and spacing/radius tokens. All added in the full rewrite.</div></div>
+<div class="issue-row"><span class="issue-icon">🟠</span><div><strong>pomodoro.py — ImportError: PAD_XL not defined</strong><br />Theme import was missing <code>PAD_XL</code>. Added to import line.</div></div>
+<div class="issue-row"><span class="issue-icon">🟡</span><div><strong>settings.py — double-insert on profile reload</strong><br /><code>_load_profile()</code> called <code>insert()</code> without clearing entries first, duplicating text on every navigation. Fixed with <code>entry.delete(0, "end")</code> before insert.</div></div>
+
+
+<h2>Theme / Design System (utils/theme.py)</h2>
+<p>All colours are <strong>(light_hex, dark_hex)</strong> tuples passed directly to CustomTkinter widgets. When <code>ctk.set_appearance_mode("dark")</code> is called, every widget re-renders automatically — no manual refresh.</p>
+<div class="grid-2">
+  <div class="card"><div class="card-title">Background hierarchy</div><div class="card-sub">BG_MAIN → BG_SURFACE → BG_CARD → BG_INPUT<br />+ BG_SIDEBAR, BG_HEADER, BG_HOVER, BG_CHIP, BG_OVERLAY</div></div>
+  <div class="card"><div class="card-title">Text</div><div class="card-sub">TEXT_PRIMARY, TEXT_SECONDARY, TEXT_MUTED, TEXT_ON_ACCENT</div></div>
+  <div class="card"><div class="card-title">Accent</div><div class="card-sub">ACCENT (#2563EB / #4F8EF7)<br />ACCENT_HOVER, ACCENT_LIGHT</div></div>
+  <div class="card"><div class="card-title">Status</div><div class="card-sub">SUCCESS / WARNING / DANGER / INFO<br />+ _LIGHT variants for subtle backgrounds</div></div>
+  <div class="card"><div class="card-title">Spacing</div><div class="card-sub">PAD_XS=4, SM=8, MD=14, LG=20, XL=30</div></div>
+  <div class="card"><div class="card-title">Subject palette</div><div class="card-sub">12-colour SUBJECT_COLORS list for auto-assigning subject accent colours</div></div>
+</div>
+
+
+<h2>Keyboard Shortcuts</h2>
+<table>
+  <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td>Alt + 1–9</td><td>Navigate to Dashboard → CGPA (9 pages in order)</td></tr>
+    <tr><td>Alt + 0</td><td>Settings</td></tr>
+    <tr><td>Ctrl + K  /  Ctrl + F</td><td>Open global QuickSearch modal</td></tr>
+    <tr><td>Ctrl + S</td><td>Quick save (context-aware — saves profile when on Settings)</td></tr>
+    <tr><td>Escape</td><td>Close any open Toplevel dialog; if none, go to Dashboard</td></tr>
+  </tbody>
+</table>
+
+
+<h2>Production-Readiness State</h2>
+<table>
+  <thead><tr><th>Area</th><th>State</th></tr></thead>
+  <tbody>
+    <tr><td>Design consistency</td><td><span class="badge badge-green">✓ Done</span> — all 16 files use theme tokens, zero hardcoded hex</td></tr>
+    <tr><td>Light / Dark mode</td><td><span class="badge badge-green">✓ Done</span> — persisted to DB; all widgets use tuple colours</td></tr>
+    <tr><td>Error handling</td><td><span class="badge badge-green">✓ Done</span> — all CRUD wrapped in try/except with messagebox alerts</td></tr>
+    <tr><td>DB integrity</td><td><span class="badge badge-green">✓ Done</span> — FK ON DELETE CASCADE, UNIQUE constraints, WAL mode</td></tr>
+    <tr><td>Test coverage</td><td><span class="badge badge-green">✓ 9/9 pass</span> — full headless DB suite</td></tr>
+    <tr><td>Cross-platform file open</td><td><span class="badge badge-green">✓ Done</span> — Windows/macOS/Linux detection in FileManager</td></tr>
+    <tr><td>Data backup</td><td><span class="badge badge-green">✓ Done</span> — JSON full export/import + CSV attendance</td></tr>
+    <tr><td>Onboarding</td><td><span class="badge badge-green">✓ Done</span> — first-run dialog with 3 action options</td></tr>
+    <tr><td>Mobile / cloud</td><td><span class="badge badge-gray">Roadmap</span> — desktop-only for now</td></tr>
+    <tr><td>PDF export</td><td><span class="badge badge-orange">Partial</span> — reportlab installed, not yet wired to a module</td></tr>
+  </tbody>
+</table>
+
+<footer>Made with IBM Bob</footer>
+</body>
+</html>

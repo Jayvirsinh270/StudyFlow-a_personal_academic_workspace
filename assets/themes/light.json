@@ -1,0 +1,23 @@
+{
+  "name": "Light",
+  "mode": "light",
+  "colors": {
+    "bg_main": "#F8FAFC",
+    "bg_surface": "#FFFFFF",
+    "bg_sidebar": "#F1F5F9",
+    "bg_header": "#FFFFFF",
+    "bg_card": "#FFFFFF",
+    "bg_input": "#F8FAFC",
+    "bg_hover": "#EFF6FF",
+    "bg_chip": "#EEF2FF",
+    "text_primary": "#1E293B",
+    "text_secondary": "#64748B",
+    "text_muted": "#94A3B8",
+    "accent": "#2563EB",
+    "accent_hover": "#1D4ED8",
+    "success": "#16A34A",
+    "warning": "#D97706",
+    "danger": "#DC2626",
+    "border": "#E2E8F0"
+  }
+}

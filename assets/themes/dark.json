@@ -1,0 +1,23 @@
+{
+  "name": "Dark",
+  "mode": "dark",
+  "colors": {
+    "bg_main": "#0F1117",
+    "bg_surface": "#1A1D27",
+    "bg_sidebar": "#13161F",
+    "bg_header": "#161921",
+    "bg_card": "#1E2130",
+    "bg_input": "#1E2130",
+    "bg_hover": "#1E2740",
+    "bg_chip": "#1E2535",
+    "text_primary": "#F1F5F9",
+    "text_secondary": "#94A3B8",
+    "text_muted": "#475569",
+    "accent": "#3B82F6",
+    "accent_hover": "#2563EB",
+    "success": "#22C55E",
+    "warning": "#F59E0B",
+    "danger": "#EF4444",
+    "border": "#1E2535"
+  }
+}

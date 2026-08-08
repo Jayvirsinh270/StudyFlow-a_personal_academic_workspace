@@ -1,0 +1,23 @@
+{
+  "name": "Ocean",
+  "mode": "dark",
+  "colors": {
+    "bg_main": "#060E1A",
+    "bg_surface": "#091424",
+    "bg_sidebar": "#07101E",
+    "bg_header": "#081220",
+    "bg_card": "#0D1A2E",
+    "bg_input": "#0D1A2E",
+    "bg_hover": "#112234",
+    "bg_chip": "#0F1E30",
+    "text_primary": "#E0F2FE",
+    "text_secondary": "#60A5C8",
+    "text_muted": "#2D5570",
+    "accent": "#0EA5E9",
+    "accent_hover": "#0284C7",
+    "success": "#22C55E",
+    "warning": "#F59E0B",
+    "danger": "#EF4444",
+    "border": "#0F2035"
+  }
+}

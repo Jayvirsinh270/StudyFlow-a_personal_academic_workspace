@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "studyflow"
+version = "1.0.0"
+description = "Your Personal Academic Workspace - A comprehensive desktop application for students"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "StudyFlow Team"}
+]
+keywords = ["education", "student", "academic", "productivity", "desktop-app"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Office/Business :: Scheduling",
+    "Topic :: Utilities",
+]
+
+dependencies = [
+    "customtkinter>=5.2.0",
+    "Pillow>=10.0.0",
+    "matplotlib>=3.8.0",
+    "reportlab>=4.0.0",
+    "tkcalendar>=1.6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/studyflow"
+Documentation = "https://github.com/yourusername/studyflow/wiki"
+Repository = "https://github.com/yourusername/studyflow"
+Issues = "https://github.com/yourusername/studyflow/issues"
+
+[project.scripts]
+studyflow = "main:main"
+
+[tool.setuptools]
+packages = []
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.md", "*.toml"]
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
