@@ -177,5 +177,7 @@ def create_tables():
 
 
 def initialize_database():
-    """Initialize database with all tables"""
+    """Initialize database with all tables and lightweight schema migrations."""
     create_tables()
+    # Schema migration is already handled inside create_tables() + _ensure_schema().
+    # No additional work needed here.

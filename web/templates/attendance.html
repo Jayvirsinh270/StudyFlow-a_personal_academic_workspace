@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Attendance</h1>
+    <p>Track your presence across all subjects</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="openMarkModal()">
+      <i data-lucide="plus"></i> Mark Attendance
+    </button>
+  </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="grid-3 stagger-children" id="attendance-stats" style="margin-bottom:24px">
+  <div class="stat-card" style="--card-accent:#22C55E;--card-accent-subtle:rgba(34,197,94,0.12)">
+    <div class="stat-icon"><i data-lucide="trending-up"></i></div>
+    <div class="stat-value" id="att-overall">—%</div>
+    <div class="stat-label">Overall Attendance</div>
+  </div>
+  <div class="stat-card" style="--card-accent:#2563EB;--card-accent-subtle:rgba(37,99,235,0.12)">
+    <div class="stat-icon"><i data-lucide="user-check"></i></div>
+    <div class="stat-value" id="att-present">—</div>
+    <div class="stat-label">Total Classes Present</div>
+  </div>
+  <div class="stat-card" style="--card-accent:#EF4444;--card-accent-subtle:rgba(239,68,68,0.12)">
+    <div class="stat-icon"><i data-lucide="user-x"></i></div>
+    <div class="stat-value" id="att-absent">—</div>
+    <div class="stat-label">Total Classes Absent</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3>Subject-wise Attendance</h3>
+    <span class="badge badge-gray" id="att-threshold-badge">75% threshold</span>
+  </div>
+  <div class="card-body" id="attendance-list">
+    <div class="empty-state">
+      <div class="empty-icon"><i data-lucide="circle-check"></i></div>
+      <h3>No subjects yet</h3>
+      <p>Add subjects first to track attendance.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Mark Attendance Modal -->
+<div id="mark-attendance-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter">
+    <div class="modal-header">
+      <h3>Mark Attendance</h3>
+      <button class="modal-close" onclick="closeMarkModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="input-group">
+        <label class="input-label">Subject</label>
+        <select class="input" id="att-subject-select"></select>
+      </div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Total Lectures</label>
+          <input type="number" class="input" id="att-total" min="0" placeholder="0">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Present Lectures</label>
+          <input type="number" class="input" id="att-present-input" min="0" placeholder="0">
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted)">Absent count will be calculated automatically.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeMarkModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAttendance()">
+        <i data-lucide="save"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

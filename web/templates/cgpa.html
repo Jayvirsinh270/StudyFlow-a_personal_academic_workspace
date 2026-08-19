@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>CGPA Calculator</h1>
+    <p>Track your academic performance semester by semester</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="openCGPAModal()">
+      <i data-lucide="plus"></i> Add Semester
+    </button>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start">
+
+  <!-- CGPA Ring Card -->
+  <div class="card">
+    <div class="card-header"><h3>Overall CGPA</h3></div>
+    <div class="card-body">
+      <div class="cgpa-hero">
+        <div class="cgpa-ring-wrapper">
+          <svg viewBox="0 0 180 180">
+            <circle class="cgpa-ring-bg" cx="90" cy="90" r="76"/>
+            <circle class="cgpa-ring-fill" id="cgpa-ring" cx="90" cy="90" r="76"
+                    stroke="#2563EB" stroke-dasharray="477.5" stroke-dashoffset="477.5"/>
+          </svg>
+          <div class="cgpa-value-display">
+            <span class="cgpa-num" id="cgpa-display">0.00</span>
+            <span class="cgpa-lbl">CGPA</span>
+          </div>
+        </div>
+        <div id="cgpa-grade-badge" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart + Table -->
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div class="card">
+      <div class="card-header"><h3>GPA Trend</h3></div>
+      <div class="card-body">
+        <!-- Fixed-height wrapper prevents Chart.js infinite grow loop -->
+        <div style="position:relative;height:200px">
+          <canvas id="cgpa-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Semester Records</h3>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Semester</th>
+              <th>GPA</th>
+              <th>Credits</th>
+              <th>Grade</th>
+              <th style="width:60px"></th>
+            </tr>
+          </thead>
+          <tbody id="cgpa-tbody">
+            <tr><td colspan="5">
+              <div class="empty-state" style="padding:32px">
+                <div class="empty-icon"><i data-lucide="trending-up"></i></div>
+                <h3>No records yet</h3>
+                <p>Add your semester GPAs to track progress.</p>
+              </div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Add Semester Modal -->
+<div id="cgpa-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter" style="max-width:420px">
+    <div class="modal-header">
+      <h3>Add Semester</h3>
+      <button class="modal-close" onclick="closeCGPAModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Semester #</label>
+          <input type="number" class="input" id="cgpa-semester" min="1" max="12" placeholder="e.g. 3">
+        </div>
+        <div class="input-group">
+          <label class="input-label">GPA (0–10)</label>
+          <input type="number" class="input" id="cgpa-gpa" min="0" max="10" step="0.01" placeholder="e.g. 8.5">
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Credits</label>
+        <input type="number" class="input" id="cgpa-credits" min="1" placeholder="e.g. 20">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCGPAModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCGPA()">
+        <i data-lucide="save"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

@@ -8,7 +8,7 @@ import csv
 import sqlite3
 from datetime import datetime
 from typing import Dict, List, Tuple
-from database import db_manager, get_subjects, get_attendance, get_cgpa_records
+from database import db_manager
 
 
 def export_full_backup(filepath: str) -> Tuple[bool, str]:
@@ -75,7 +75,6 @@ def import_full_backup(filepath: str) -> Tuple[bool, str]:
 def export_attendance_csv(filepath: str) -> Tuple[bool, str]:
     """Export attendance summary report to CSV."""
     try:
-        subjects = get_subjects() or []
         conn = db_manager.get_connection()
         cursor = conn.cursor()
 

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Daily Planner</h1>
+    <p>Plan and track your study tasks day by day</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="openTaskModal()">
+      <i data-lucide="plus"></i> Add Task
+    </button>
+  </div>
+</div>
+
+<!-- Date Navigation -->
+<div class="planner-date-nav">
+  <button class="btn btn-ghost btn-sm btn-icon" onclick="changeDate(-1)">
+    <i data-lucide="chevron-left"></i>
+  </button>
+  <div class="date-label" id="planner-date-label">Today</div>
+  <button class="btn btn-ghost btn-sm btn-icon" onclick="changeDate(1)">
+    <i data-lucide="chevron-right"></i>
+  </button>
+  <input type="date" class="input" id="planner-date-picker" onchange="jumpToDate(this.value)"
+         style="max-width:160px;height:34px">
+  <button class="btn btn-ghost btn-sm" onclick="goToday()">Today</button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3 id="planner-card-title">Tasks</h3>
+    <span class="badge badge-blue" id="planner-task-count">0 tasks</span>
+  </div>
+  <div class="card-body" id="task-list">
+    <div class="empty-state" style="padding:40px">
+      <div class="empty-icon"><i data-lucide="sun"></i></div>
+      <h3>No tasks for this day</h3>
+      <p>Add a task to plan your study session.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Task Modal -->
+<div id="task-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter">
+    <div class="modal-header">
+      <h3 id="task-modal-title">Add Task</h3>
+      <button class="modal-close" onclick="closeTaskModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="task-edit-id">
+      <div class="input-group">
+        <label class="input-label">Task Title *</label>
+        <input type="text" class="input" id="task-title" placeholder="e.g. Read Chapter 5">
+      </div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Date</label>
+          <input type="date" class="input" id="task-date">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Type</label>
+          <select class="input" id="task-type">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="exam">Exam Prep</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Notes</label>
+        <textarea class="input" id="task-desc" placeholder="Optional details…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeTaskModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTask()">
+        <i data-lucide="save"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

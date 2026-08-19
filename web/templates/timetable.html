@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Timetable</h1>
+    <p>Your weekly class schedule at a glance</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="openTTModal()">
+      <i data-lucide="plus"></i> Add Class
+    </button>
+  </div>
+</div>
+
+<div class="card" style="overflow:auto">
+  <div id="timetable-grid" style="min-width:700px"></div>
+</div>
+
+<!-- Add/Edit Class Modal -->
+<div id="tt-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter">
+    <div class="modal-header">
+      <h3 id="tt-modal-title">Add Class</h3>
+      <button class="modal-close" onclick="closeTTModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="tt-edit-id">
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Day</label>
+          <select class="input" id="tt-day">
+            <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+            <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Time Slot</label>
+          <input type="text" class="input" id="tt-time" placeholder="e.g. 09:00-10:00">
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Subject</label>
+        <select class="input" id="tt-subject"></select>
+      </div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Classroom</label>
+          <input type="text" class="input" id="tt-classroom" placeholder="e.g. Room 204">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Faculty</label>
+          <input type="text" class="input" id="tt-faculty" placeholder="Optional">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeTTModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTTEntry()">
+        <i data-lucide="save"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- View/Delete modal -->
+<div id="tt-view-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter" style="max-width:380px">
+    <div class="modal-header">
+      <h3 id="tt-view-title">Class Details</h3>
+      <button class="modal-close" onclick="closeTTViewModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body" id="tt-view-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="deleteTTEntry()"><i data-lucide="trash-2"></i> Delete</button>
+      <button class="btn btn-ghost" onclick="closeTTViewModal()">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

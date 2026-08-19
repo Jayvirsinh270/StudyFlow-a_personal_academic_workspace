@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Subjects</h1>
+    <p>Manage your enrolled courses this semester</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="openSubjectModal()">
+      <i data-lucide="plus"></i> Add Subject
+    </button>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-search">
+    <i data-lucide="search"></i>
+    <input type="text" id="subject-search" placeholder="Search subjects…" oninput="filterSubjects(this.value)">
+  </div>
+</div>
+
+<div class="subjects-grid stagger-children" id="subjects-grid">
+  <div class="empty-state" style="grid-column:1/-1;padding:60px">
+    <div class="empty-icon"><i data-lucide="book-open"></i></div>
+    <h3>No subjects yet</h3>
+    <p>Add your first subject to get started.</p>
+    <button class="btn btn-primary mt-4" onclick="openSubjectModal()">
+      <i data-lucide="plus"></i> Add Subject
+    </button>
+  </div>
+</div>
+
+<!-- Subject Modal -->
+<div id="subject-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter">
+    <div class="modal-header">
+      <h3 id="subject-modal-title">Add Subject</h3>
+      <button class="modal-close" onclick="closeSubjectModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="subject-edit-id">
+      <div class="input-group">
+        <label class="input-label">Subject Name *</label>
+        <input type="text" class="input" id="subject-name" placeholder="e.g. Data Structures">
+      </div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Subject Code</label>
+          <input type="text" class="input" id="subject-code" placeholder="e.g. CS201">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Credit Hours</label>
+          <input type="number" class="input" id="subject-credit" placeholder="3" min="1" max="6">
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Faculty / Instructor</label>
+        <input type="text" class="input" id="subject-faculty" placeholder="e.g. Dr. Smith">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Color</label>
+        <div class="color-swatches" id="subject-color-swatches"></div>
+        <input type="hidden" id="subject-color" value="#6366F1">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeSubjectModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSubject()">
+        <i data-lucide="save"></i> Save Subject
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirm modal -->
+<div id="subject-delete-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter" style="max-width:380px">
+    <div class="modal-header">
+      <h3>Delete Subject?</h3>
+      <button class="modal-close" onclick="closeDeleteModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-secondary);font-size:13.5px">
+        This will permanently delete <strong id="delete-subject-name"></strong> and all its assignments, attendance records and notes.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDeleteSubject()">
+        <i data-lucide="trash-2"></i> Delete
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Assignments</h1>
+    <p>Track deadlines, priorities and progress</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="openAssignmentModal()">
+      <i data-lucide="plus"></i> Add Assignment
+    </button>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-search">
+    <i data-lucide="search"></i>
+    <input type="text" id="assignment-search" placeholder="Search assignments…" oninput="filterAssignments()">
+  </div>
+  <div class="filter-tabs" id="status-tabs">
+    <div class="filter-tab active" data-status="all" onclick="setStatusFilter('all',this)">All</div>
+    <div class="filter-tab" data-status="pending" onclick="setStatusFilter('pending',this)">Pending</div>
+    <div class="filter-tab" data-status="in_progress" onclick="setStatusFilter('in_progress',this)">In Progress</div>
+    <div class="filter-tab" data-status="completed" onclick="setStatusFilter('completed',this)">Completed</div>
+  </div>
+  <select class="input" id="priority-filter" onchange="filterAssignments()" style="max-width:140px;height:34px">
+    <option value="all">All Priorities</option>
+    <option value="high">High</option>
+    <option value="medium">Medium</option>
+    <option value="low">Low</option>
+  </select>
+  <select class="input" id="subject-filter" onchange="filterAssignments()" style="max-width:180px;height:34px">
+    <option value="all">All Subjects</option>
+  </select>
+</div>
+
+<div class="card">
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px"></th>
+          <th>Assignment</th>
+          <th>Subject</th>
+          <th>Priority</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th style="width:80px"></th>
+        </tr>
+      </thead>
+      <tbody id="assignments-tbody">
+        <tr><td colspan="7">
+          <div class="empty-state" style="padding:40px">
+            <div class="empty-icon"><i data-lucide="check-square"></i></div>
+            <h3>No assignments yet</h3>
+            <p>Add your first assignment to start tracking.</p>
+          </div>
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Assignment Modal -->
+<div id="assignment-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter">
+    <div class="modal-header">
+      <h3 id="assignment-modal-title">Add Assignment</h3>
+      <button class="modal-close" onclick="closeAssignmentModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="assignment-edit-id">
+      <div class="input-group">
+        <label class="input-label">Title *</label>
+        <input type="text" class="input" id="assignment-title" placeholder="e.g. Lab Report #3">
+      </div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Subject</label>
+          <select class="input" id="assignment-subject"></select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Priority</label>
+          <select class="input" id="assignment-priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Due Date</label>
+          <input type="date" class="input" id="assignment-due">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Status</label>
+          <select class="input" id="assignment-status">
+            <option value="pending" selected>Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Description</label>
+        <textarea class="input" id="assignment-desc" placeholder="Notes or requirements…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAssignmentModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAssignment()">
+        <i data-lucide="save"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

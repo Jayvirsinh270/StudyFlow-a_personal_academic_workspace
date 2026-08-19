@@ -1,31 +1,38 @@
 """
-StudyFlow Design System — v2
+StudyFlow Design System — v3
 Inspired by Notion, Linear, Todoist, and Microsoft Fluent.
 
 CustomTkinter widgets accept (light_color, dark_color) tuples.
 When ctk.set_appearance_mode() changes every widget auto-repaints.
 
-Spacing system: 8 / 16 / 24 / 32 px grid.
+Light mode overhaul: clear visual hierarchy with distinct surface layers.
+  #F0F4F8 → window bg
+  #FFFFFF  → primary surface / cards
+  #F1F5F9  → secondary surface / input bg
+  #E8EDF3  → chip / tag / inactive pill bg
+  #E2E8F0  → borders
+
+Spacing system: 4 / 8 / 16 / 24 / 32 px grid.
 Radius system : 6 / 10 / 14 / 16 px.
 """
 
 # ── Background Hierarchy ─────────────────────────────────────────────────────
-BG_MAIN    = ("#F8FAFC", "#0F1117")         # outermost window
-BG_SURFACE = ("#FFFFFF", "#1A1D27")         # cards, panels
-BG_SIDEBAR = ("#F1F5F9", "#13161F")         # left nav
+BG_MAIN    = ("#F0F4F8", "#0F1117")         # outermost window — light blue-grey
+BG_SURFACE = ("#FFFFFF", "#1A1D27")         # cards, panels — pure white on light
+BG_SIDEBAR = ("#FFFFFF", "#13161F")         # sidebar — white with visible border
 BG_HEADER  = ("#FFFFFF", "#161921")         # top bar
-BG_INPUT   = ("#F8FAFC", "#1E2130")         # entry / search fields
-BG_HOVER   = ("#EFF6FF", "#1E2740")         # hover / highlight
-BG_CHIP    = ("#EEF2FF", "#1E2535")         # small pills / tags
+BG_INPUT   = ("#F1F5F9", "#1E2130")         # entry / search fields — visible inset
+BG_HOVER   = ("#EFF6FF", "#1E2740")         # hover highlight
+BG_CHIP    = ("#E8EDF3", "#1E2535")         # chips / tags — clearly distinct from white
 BG_CARD    = ("#FFFFFF", "#1E2130")         # raised cards
 BG_ROW     = ("#F8FAFC", "#181B26")         # alternating table rows
 BG_OVERLAY = ("#F1F5F9", "#161A24")         # subtle overlay
-BG_ACTIVE  = ("#EFF6FF", "#1E2F50")         # active nav item bg (non-accent)
+BG_ACTIVE  = ("#EFF6FF", "#1E2F50")         # active nav item bg
 
 # ── Text ─────────────────────────────────────────────────────────────────────
-TEXT_PRIMARY   = ("#1E293B", "#F1F5F9")
-TEXT_SECONDARY = ("#64748B", "#94A3B8")
-TEXT_MUTED     = ("#94A3B8", "#475569")
+TEXT_PRIMARY   = ("#0F172A", "#F1F5F9")     # stronger dark ink for light mode
+TEXT_SECONDARY = ("#475569", "#94A3B8")     # improved contrast on white
+TEXT_MUTED     = ("#64748B", "#475569")     # still readable
 TEXT_ON_ACCENT = ("#FFFFFF", "#FFFFFF")
 TEXT_ON_DARK   = ("#FFFFFF", "#FFFFFF")
 
@@ -46,25 +53,25 @@ INFO           = ("#0284C7", "#38BDF8")
 INFO_LIGHT     = ("#F0F9FF", "#082F49")
 
 # ── Border / Divider ─────────────────────────────────────────────────────────
-BORDER         = ("#E2E8F0", "#1E2535")
+BORDER         = ("#CBD5E1", "#1E2535")     # stronger border in light mode
 BORDER_FOCUS   = ("#2563EB", "#3B82F6")
-BORDER_STRONG  = ("#CBD5E1", "#2D3554")
+BORDER_STRONG  = ("#94A3B8", "#2D3554")     # even stronger for key separators
 
 # ── Priority badge colors ─────────────────────────────────────────────────────
-PRIORITY_HIGH   = "#EF4444"
-PRIORITY_MEDIUM = "#F59E0B"
-PRIORITY_LOW    = "#22C55E"
+PRIORITY_HIGH   = "#DC2626"
+PRIORITY_MEDIUM = "#D97706"
+PRIORITY_LOW    = "#16A34A"
 
 # ── Attendance status colors ──────────────────────────────────────────────────
-ATTENDANCE_GOOD     = "#22C55E"   # ≥ 75 %
-ATTENDANCE_WARNING  = "#F59E0B"   # 60–74 %
-ATTENDANCE_CRITICAL = "#EF4444"   # < 60 %
+ATTENDANCE_GOOD     = "#16A34A"
+ATTENDANCE_WARNING  = "#D97706"
+ATTENDANCE_CRITICAL = "#DC2626"
 
 # ── Subject accent palette ────────────────────────────────────────────────────
 SUBJECT_COLORS = [
-    "#6366F1", "#3B82F6", "#0EA5E9", "#14B8A6",
-    "#10B981", "#84CC16", "#F59E0B", "#EF4444",
-    "#EC4899", "#A855F7", "#8B5CF6", "#F97316",
+    "#6366F1", "#2563EB", "#0284C7", "#0D9488",
+    "#16A34A", "#65A30D", "#D97706", "#DC2626",
+    "#DB2777", "#9333EA", "#7C3AED", "#EA580C",
 ]
 
 # ── Spacing (8-pt grid) ───────────────────────────────────────────────────────
@@ -80,9 +87,9 @@ RADIUS_MD = 10
 RADIUS_LG = 14
 RADIUS_XL = 16
 
-# ── Shadow simulation (for border highlights) ─────────────────────────────────
-SHADOW_SM = ("#E2E8F0", "#0D1117")
-SHADOW_MD = ("#CBD5E1", "#0A0D14")
+# ── Shadow simulation ─────────────────────────────────────────────────────────
+SHADOW_SM = ("#CBD5E1", "#0D1117")
+SHADOW_MD = ("#94A3B8", "#0A0D14")
 
 # ── Typography scale ──────────────────────────────────────────────────────────
 FONT_FAMILY  = "Segoe UI"
@@ -107,10 +114,10 @@ def attendance_color(percentage: float) -> str:
 
 def gpa_color(gpa: float) -> str:
     if gpa >= 3.5:
-        return SUCCESS[1]
+        return SUCCESS[0]
     if gpa >= 2.5:
-        return WARNING[1]
-    return DANGER[1]
+        return WARNING[0]
+    return DANGER[0]
 
 
 def priority_color(priority: str) -> str:
@@ -126,7 +133,3 @@ def subject_color(subject: dict, index: int = 0) -> str:
     return subject.get("color") or SUBJECT_COLORS[index % len(SUBJECT_COLORS)]
 
 
-def make_font(size: int = FONT_MD, weight: str = "normal") -> dict:
-    """Return a CTkFont kwarg dict."""
-    import customtkinter as ctk
-    return ctk.CTkFont(family=FONT_FAMILY, size=size, weight=weight)

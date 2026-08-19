@@ -205,6 +205,7 @@ def get_notes(subject_id: int = None, sort_by: str = "updated_at") -> List[Dict]
         pinned = 1 if note.get('is_pinned') else 0
         base_value = note.get(sort_by) or note.get('updated_at') or ""
         if isinstance(base_value, str):
+            # pinned notes first (not pinned = False sorts before True), then by value
             return (not pinned, base_value.lower())
         return (not pinned, base_value)
 
@@ -358,22 +359,6 @@ def delete_subject_file(file_id: int) -> bool:
     return cursor.rowcount > 0
 
 
-def add_document(subject_id: int, file_name: str, file_path: str,
-                file_type: str = None, file_size: int = None) -> int:
-    """Compatibility wrapper for document uploads using the subject_files table."""
-    return add_subject_file(subject_id, file_name, file_path, file_type, file_size)
-
-
-def get_documents(subject_id: int = None) -> List[Dict]:
-    """Compatibility wrapper for retrieving documents stored as subject files."""
-    return get_subject_files(subject_id)
-
-
-def delete_document(file_id: int) -> bool:
-    """Compatibility wrapper for deleting a document record."""
-    return delete_subject_file(file_id)
-
-
 # ==================== ATTENDANCE ====================
 
 def update_attendance(subject_id: int, total_lectures: int = None,
@@ -423,10 +408,10 @@ def get_attendance(subject_id: int) -> Optional[Dict]:
     """Get attendance for a subject"""
     conn = db_manager.get_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT * FROM attendance WHERE subject_id = ?", (subject_id,))
     row = cursor.fetchone()
-    
+
     if row:
         columns = [desc[0] for desc in cursor.description]
         return dict(zip(columns, row))
@@ -685,21 +670,21 @@ def calculate_cgpa() -> float:
 
 
 def update_cgpa_record(record_id: int, semester: int = None, gpa: float = None,
-                      credits: float = None) -> bool:
+                       credits: float = None) -> bool:
     """Update a CGPA record"""
     conn = db_manager.get_connection()
     cursor = conn.cursor()
-    
+
     updates = []
     values = []
-    
-    if semester:
+
+    if semester is not None:
         updates.append("semester = ?")
         values.append(semester)
-    if gpa:
+    if gpa is not None:
         updates.append("gpa = ?")
         values.append(gpa)
-    if credits:
+    if credits is not None:
         updates.append("credits = ?")
         values.append(credits)
     
@@ -887,20 +872,34 @@ def delete_study_task(task_id: int) -> bool:
 
 # ==================== SETTINGS ====================
 
-def get_setting(setting_key: str) -> Optional[str]:
-    """Get a setting value"""
+def get_setting(setting_key: str):
+    """Get a setting value, restoring JSON-serialized values to Python objects."""
     conn = db_manager.get_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT setting_value FROM settings WHERE setting_key = ?", (setting_key,))
     row = cursor.fetchone()
-    
-    if row:
-        return row[0]
-    return None
+
+    if not row:
+        return None
+
+    raw_value = row[0]
+    if raw_value is None:
+        return None
+
+    if isinstance(raw_value, str):
+        stripped = raw_value.strip()
+        if stripped == "":
+            return raw_value
+        try:
+            return json.loads(stripped)
+        except (TypeError, ValueError):
+            return raw_value
+
+    return raw_value
 
 
-def set_setting(setting_key: str, setting_value: str) -> bool:
+def set_setting(setting_key: str, setting_value) -> bool:
     """Set a setting value, serializing non-string values to JSON before saving."""
     conn = db_manager.get_connection()
     cursor = conn.cursor()
@@ -913,6 +912,6 @@ def set_setting(setting_key: str, setting_value: str) -> bool:
         INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
         ON CONFLICT(setting_key) DO UPDATE SET setting_value = ?, updated_at = CURRENT_TIMESTAMP
     """, (setting_key, serialized_value, serialized_value))
-    
+
     conn.commit()
     return True

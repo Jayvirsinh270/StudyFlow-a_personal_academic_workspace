@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Settings</h1>
+    <p>Manage your profile and application preferences</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="saveProfile()">
+      <i data-lucide="save"></i> Save Changes
+    </button>
+  </div>
+</div>
+
+<div style="max-width:780px">
+
+  <!-- Profile Section -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">
+      <h3><i data-lucide="user" style="width:15px;height:15px;vertical-align:middle;margin-right:6px"></i>Student Profile</h3>
+    </div>
+    <div class="card-body">
+      <div class="settings-grid">
+        <div class="input-group">
+          <label class="input-label">Full Name</label>
+          <input type="text" class="input" id="profile-name" placeholder="Your full name">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Enrollment Number</label>
+          <input type="text" class="input" id="profile-enrollment" placeholder="e.g. 2021CS001">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Department</label>
+          <input type="text" class="input" id="profile-dept" placeholder="e.g. Computer Science">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Current Semester</label>
+          <input type="number" class="input" id="profile-semester" min="1" max="12" placeholder="e.g. 4">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Appearance -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">
+      <h3><i data-lucide="palette" style="width:15px;height:15px;vertical-align:middle;margin-right:6px"></i>Appearance</h3>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+        <div>
+          <p style="font-size:13.5px;font-weight:600;color:var(--text-primary)">Light Mode</p>
+          <p style="font-size:12px;color:var(--text-muted)">Switch between dark and light appearance</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settings-theme-toggle" onchange="settingsToggleTheme(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data & Backup -->
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="database" style="width:15px;height:15px;vertical-align:middle;margin-right:6px"></i>Data & Backup</h3>
+    </div>
+    <div class="card-body" style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="exportData()">
+        <i data-lucide="download"></i> Export Data
+      </button>
+      <button class="btn btn-ghost" style="color:var(--danger);border-color:var(--danger-subtle)" onclick="confirmReset()">
+        <i data-lucide="alert-triangle"></i> Reset All Data
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Confirm Reset Modal -->
+<div id="reset-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter" style="max-width:400px">
+    <div class="modal-header">
+      <h3>Reset All Data?</h3>
+      <button class="modal-close" onclick="closeResetModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-secondary);font-size:13.5px">
+        This will permanently delete all your subjects, assignments, notes, and attendance data. This action cannot be undone.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeResetModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="doReset()">
+        <i data-lucide="trash-2"></i> Yes, Reset Everything
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

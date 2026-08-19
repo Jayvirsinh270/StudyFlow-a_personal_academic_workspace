@@ -1,0 +1,359 @@
+/* ============================================================
+   StudyFlow — animations.css
+   Entrance, micro-interaction, and loading animations
+   ============================================================ */
+
+/* Page content entrance */
+.page-enter {
+  animation: pageEnter 220ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Stagger children */
+.stagger-children > * {
+  animation: staggerIn 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 40ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 120ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(n+6) { animation-delay: 200ms; }
+
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Number count-up (via JS class toggle) */
+.count-up { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Card hover lift */
+.card-hover {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-color: rgba(99, 110, 123, 0.5) !important;
+}
+
+/* Pulse dot (notification / live indicator) */
+.pulse-dot {
+  position: relative;
+}
+.pulse-dot::after {
+  content: '';
+  position: absolute; inset: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--danger);
+  animation: pulseDot 1.8s ease-out infinite;
+}
+@keyframes pulseDot {
+  0%   { opacity: 1; transform: scale(1); }
+  70%  { opacity: 0; transform: scale(2); }
+  100% { opacity: 0; transform: scale(2); }
+}
+
+/* Shimmer skeleton */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-elevated) 25%,
+    var(--bg-hover) 50%,
+    var(--bg-elevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Focus ring */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent-light);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Ripple on button click */
+.btn-ripple {
+  position: relative; overflow: hidden;
+}
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  width: 0; height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+}
+.btn-ripple:active::after {
+  width: 200px; height: 200px;
+  opacity: 1;
+  transition: 0s;
+}
+
+/* Progress bar animated fill */
+.progress-fill-animate {
+  animation: progressFill 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes progressFill {
+  from { width: 0; }
+}
+
+/* Nav item active indicator */
+.nav-item.active .nav-indicator {
+  width: 3px; height: 16px;
+  background: var(--accent-light);
+  border-radius: 2px;
+  position: absolute; left: 0;
+  animation: slideIn 150ms ease both;
+}
+@keyframes slideIn {
+  from { height: 0; opacity: 0; }
+  to   { height: 16px; opacity: 1; }
+}
+
+/* Modal entrance */
+.modal-enter {
+  animation: modalEnter 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes modalEnter {
+  from { opacity: 0; transform: scale(0.93) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Pomodoro ring dash animation */
+.ring-tick {
+  transition: stroke-dashoffset 1s linear;
+}
+
+/* ============================================================
+   STARTUP LOADER
+   Education-themed: ring, orbit, particles, progress bar
+   ============================================================ */
+
+#app-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0D1117;
+  overflow: hidden;
+}
+
+/* ── Exit animation ───────────────────────────────────────── */
+#app-loader.loader-exit {
+  animation: loaderExit 480ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes loaderExit {
+  0%   { opacity: 1; transform: scale(1); }
+  60%  { opacity: 0.6; transform: scale(1.04); }
+  100% { opacity: 0; transform: scale(1.08); pointer-events: none; }
+}
+
+/* ── Floating background particles ───────────────────────── */
+.loader-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.lp {
+  position: absolute;
+  font-size: 22px;
+  opacity: 0.12;
+  animation: lpFloat linear infinite;
+  user-select: none;
+}
+.lp1  { left: 8%;  top: 15%; animation-duration: 9s;  animation-delay: 0s;    font-size: 20px; }
+.lp2  { left: 22%; top: 72%; animation-duration: 11s; animation-delay: -2s;   font-size: 18px; }
+.lp3  { left: 38%; top: 8%;  animation-duration: 13s; animation-delay: -1s;   font-size: 24px; }
+.lp4  { left: 55%; top: 82%; animation-duration: 10s; animation-delay: -3s;   font-size: 20px; }
+.lp5  { left: 70%; top: 18%; animation-duration: 8s;  animation-delay: -0.5s; font-size: 22px; }
+.lp6  { left: 82%; top: 60%; animation-duration: 12s; animation-delay: -4s;   font-size: 18px; }
+.lp7  { left: 14%; top: 48%; animation-duration: 14s; animation-delay: -6s;   font-size: 20px; }
+.lp8  { left: 91%; top: 38%; animation-duration: 10s; animation-delay: -2.5s; font-size: 22px; }
+@keyframes lpFloat {
+  0%   { transform: translateY(0px)   rotate(0deg);   opacity: 0.10; }
+  40%  { opacity: 0.18; }
+  100% { transform: translateY(-60px) rotate(15deg);  opacity: 0.08; }
+}
+
+/* ── Central card ─────────────────────────────────────────── */
+.loader-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  animation: loaderCardIn 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes loaderCardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ── Logo ring ────────────────────────────────────────────── */
+.loader-logo-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+.loader-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.loader-ring-track {
+  fill: none;
+  stroke: rgba(37, 99, 235, 0.15);
+  stroke-width: 6;
+}
+.loader-ring-fill {
+  fill: none;
+  stroke: url(#loader-gradient);
+  stroke: #3B82F6;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 327;
+  stroke-dashoffset: 327;
+  animation: ringFill 1.6s cubic-bezier(0.4, 0, 0.2, 1) 200ms forwards,
+             ringPulse 2.4s ease-in-out 1.8s infinite;
+}
+@keyframes ringFill {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes ringPulse {
+  0%, 100% { stroke-opacity: 1; }
+  50%       { stroke-opacity: 0.55; }
+}
+.loader-logo-inner {
+  position: absolute;
+  inset: 14px;
+  background: linear-gradient(135deg, #1E3A6E 0%, #1D4ED8 50%, #3B82F6 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(37, 99, 235, 0.4),
+              0 0 60px rgba(37, 99, 235, 0.15);
+  animation: logoPulse 2.4s ease-in-out 1.8s infinite;
+}
+@keyframes logoPulse {
+  0%, 100% { box-shadow: 0 0 30px rgba(37,99,235,0.4), 0 0 60px rgba(37,99,235,0.15); }
+  50%       { box-shadow: 0 0 42px rgba(37,99,235,0.6), 0 0 80px rgba(37,99,235,0.25); }
+}
+.loader-logo-letter {
+  font-family: 'Inter', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  animation: letterPop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) 400ms both;
+}
+@keyframes letterPop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Brand text ───────────────────────────────────────────── */
+.loader-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #E6EDF3;
+  letter-spacing: -0.5px;
+  animation: fadeSlideUp 500ms ease 700ms both;
+}
+.loader-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #8B949E;
+  margin-top: 4px;
+  margin-bottom: 28px;
+  animation: fadeSlideUp 500ms ease 800ms both;
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Progress bar ─────────────────────────────────────────── */
+.loader-bar-wrap {
+  width: 260px;
+  height: 4px;
+  background: rgba(48, 54, 61, 0.8);
+  border-radius: 99px;
+  overflow: hidden;
+  animation: fadeSlideUp 400ms ease 900ms both;
+}
+.loader-bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #1D4ED8 0%, #3B82F6 50%, #60A5FA 100%);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+  transition: width 30ms linear;
+}
+
+/* ── Tip text ─────────────────────────────────────────────── */
+.loader-tip {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #484F58;
+  margin-top: 12px;
+  height: 18px;
+  transition: opacity 220ms ease;
+  animation: fadeSlideUp 400ms ease 1000ms both;
+}
+
+/* ── Orbiting icons ───────────────────────────────────────── */
+.loader-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  animation: fadeSlideUp 400ms ease 1200ms both;
+}
+.orbit-ring {
+  position: relative;
+  width: 0;
+  height: 0;
+  animation: orbitSpin 8s linear infinite;
+}
+@keyframes orbitSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.orbit-icon {
+  position: absolute;
+  font-size: 18px;
+  display: block;
+  /* counter-rotate so icons stay upright */
+  animation: orbitCounter 8s linear infinite;
+}
+@keyframes orbitCounter {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+/* place 4 icons evenly on a 100px radius circle */
+.oi-1 { transform: translate(-50px, -100px); }
+.oi-2 { transform: translate( 50px, -100px); }
+.oi-3 { transform: translate( 50px,   60px); }
+.oi-4 { transform: translate(-50px,   60px); }
+

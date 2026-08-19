@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyFlow</title>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- FullCalendar -->
+  <link  href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+
+  <!-- StudyFlow CSS -->
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/animations.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     STARTUP LOADER — shown until app JS finishes booting
+     ═══════════════════════════════════════════════════════ -->
+<div id="app-loader">
+
+  <!-- Floating particles -->
+  <div class="loader-particles">
+    <span class="lp lp1">📚</span>
+    <span class="lp lp2">✏️</span>
+    <span class="lp lp3">🎓</span>
+    <span class="lp lp4">📐</span>
+    <span class="lp lp5">🔬</span>
+    <span class="lp lp6">📊</span>
+    <span class="lp lp7">💡</span>
+    <span class="lp lp8">📝</span>
+  </div>
+
+  <div class="loader-card">
+
+    <!-- Animated logo ring -->
+    <div class="loader-logo-wrap">
+      <svg class="loader-ring" viewBox="0 0 120 120">
+        <circle class="loader-ring-track" cx="60" cy="60" r="52"/>
+        <circle class="loader-ring-fill"  cx="60" cy="60" r="52"/>
+      </svg>
+      <div class="loader-logo-inner">
+        <span class="loader-logo-letter">S</span>
+      </div>
+    </div>
+
+    <!-- Brand text -->
+    <h1 class="loader-title">StudyFlow</h1>
+    <p  class="loader-subtitle">Your Personal Academic Workspace</p>
+
+    <!-- Animated progress bar -->
+    <div class="loader-bar-wrap">
+      <div class="loader-bar-fill" id="loader-bar"></div>
+    </div>
+
+    <!-- Cycling study tips -->
+    <p class="loader-tip" id="loader-tip">Preparing your workspace…</p>
+
+    <!-- Orbiting icons -->
+    <div class="loader-orbit">
+      <div class="orbit-ring">
+        <span class="orbit-icon oi-1">📖</span>
+        <span class="orbit-icon oi-2">🧮</span>
+        <span class="orbit-icon oi-3">🏆</span>
+        <span class="orbit-icon oi-4">📅</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- ═══ end loader ═══════════════════════════════════════ -->
+
+<!-- App Shell -->
+<div class="app-shell">
+
+  <!-- ── Sidebar ───────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">S</div>
+      <div class="sidebar-brand-text">
+        <h2>StudyFlow</h2>
+        <span>Academic Workspace</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- MAIN -->
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item" data-page="dashboard">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+      </div>
+      <div class="nav-item" data-page="subjects">
+        <i data-lucide="book-open"></i> Subjects
+      </div>
+      <div class="nav-item" data-page="assignments">
+        <i data-lucide="check-square"></i> Assignments
+      </div>
+      <div class="nav-item" data-page="attendance">
+        <i data-lucide="circle-check"></i> Attendance
+      </div>
+
+      <!-- TOOLS -->
+      <div class="nav-section-label">Tools</div>
+      <div class="nav-item" data-page="planner">
+        <i data-lucide="calendar-days"></i> Planner
+      </div>
+      <div class="nav-item" data-page="timetable">
+        <i data-lucide="table-2"></i> Timetable
+      </div>
+      <div class="nav-item" data-page="calendar">
+        <i data-lucide="calendar"></i> Calendar
+      </div>
+      <div class="nav-item" data-page="pomodoro">
+        <i data-lucide="timer"></i> Focus Timer
+      </div>
+
+      <!-- ACADEMIC -->
+      <div class="nav-section-label">Academic</div>
+      <div class="nav-item" data-page="notes">
+        <i data-lucide="notebook-pen"></i> Notes
+      </div>
+      <div class="nav-item" data-page="documents">
+        <i data-lucide="file-stack"></i> Documents
+      </div>
+      <div class="nav-item" data-page="cgpa">
+        <i data-lucide="trending-up"></i> CGPA
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="nav-section-label">Account</div>
+      <div class="nav-item" data-page="settings">
+        <i data-lucide="settings"></i> Settings
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="theme-toggle-row">
+        <label for="theme-toggle">Light mode</label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="profile-card" onclick="navigateTo('settings')">
+        <div class="profile-avatar" id="sidebar-profile-init">S</div>
+        <div class="profile-info">
+          <p id="sidebar-profile-name">Student</p>
+          <span id="sidebar-profile-sub">Loading…</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main area ──────────────────────────────────────────── -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="breadcrumb">
+        <span class="app-name">StudyFlow</span>
+        <span class="sep">›</span>
+        <span class="page-name" id="page-title">Dashboard</span>
+      </div>
+
+      <div class="header-search">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="header-search-input" placeholder="Search everything…" autocomplete="off">
+        <span class="search-kbd">Ctrl+K</span>
+      </div>
+
+      <div class="header-right">
+        <span class="header-clock" id="header-clock"></span>
+        <button class="icon-btn" title="Notifications">
+          <i data-lucide="bell"></i>
+          <span class="notif-badge"></span>
+        </button>
+        <div class="profile-chip" onclick="navigateTo('settings')">
+          <div class="profile-chip-avatar" id="profile-chip-init">S</div>
+          <span id="profile-chip-name">Student</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="content-area" id="content-area">
+      <div class="page-content page-enter">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+</div>
+
+<!-- Search Overlay -->
+<div id="search-overlay" class="hidden" onclick="if(event.target.id==='search-overlay') closeSearch()">
+  <div class="search-box">
+    <div class="search-box-input">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Search subjects, assignments, notes, files…" autocomplete="off">
+      <span class="kbd">Esc</span>
+    </div>
+    <div id="search-results">
+      <div class="search-empty">Type to search subjects, assignments, notes and files…</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Scripts: ALL loaded once in the shell so SPA nav never needs to re-execute scripts -->
+<script src="/static/js/app.js"></script>
+<script src="/static/js/dashboard.js"></script>
+<script src="/static/js/subjects.js"></script>
+<script src="/static/js/assignments.js"></script>
+<script src="/static/js/attendance.js"></script>
+<script src="/static/js/timetable.js"></script>
+<script src="/static/js/planner.js"></script>
+<script src="/static/js/calendar.js"></script>
+<script src="/static/js/pomodoro.js"></script>
+<script src="/static/js/cgpa.js"></script>
+<script src="/static/js/documents.js"></script>
+<script src="/static/js/notes.js"></script>
+<script src="/static/js/settings.js"></script>
+
+<script>
+  // Highlight active page on load
+  const currentPage = '{{ page }}';
+  document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === currentPage);
+  });
+  if (window.lucide) lucide.createIcons();
+</script>
+
+<script>
+/* ── Startup loader controller ──────────────────────────────── */
+(function() {
+  const loader  = document.getElementById('app-loader');
+  const bar     = document.getElementById('loader-bar');
+  const tipEl   = document.getElementById('loader-tip');
+  if (!loader) return;
+
+  const tips = [
+    'Preparing your workspace…',
+    'Loading your subjects & notes…',
+    'Syncing timetable & assignments…',
+    'Almost there — stay focused! 🎯',
+    'Knowledge is power. Let\'s go! 🚀',
+  ];
+  let tipIdx = 0;
+  const cycleTip = () => {
+    tipIdx = (tipIdx + 1) % tips.length;
+    tipEl.style.opacity = '0';
+    setTimeout(() => { tipEl.textContent = tips[tipIdx]; tipEl.style.opacity = '1'; }, 220);
+  };
+  const tipTimer = setInterval(cycleTip, 1400);
+
+  // Smooth progress bar driven by real time
+  let pct = 0;
+  const TOTAL_MS = 1400;   // target dismiss time
+  const TICK_MS  = 30;
+  const step = 92 / (TOTAL_MS / TICK_MS);   // fill to 92% over TOTAL_MS, then snap to 100
+  const barTimer = setInterval(() => {
+    pct = Math.min(pct + step + Math.random() * 1.5, 92);
+    bar.style.width = pct + '%';
+  }, TICK_MS);
+
+  function dismiss() {
+    clearInterval(tipTimer);
+    clearInterval(barTimer);
+    bar.style.transition = 'width 250ms ease';
+    bar.style.width = '100%';
+    setTimeout(() => {
+      loader.classList.add('loader-exit');
+      setTimeout(() => loader.remove(), 500);
+    }, 260);
+  }
+
+  // Dismiss once the page is interactive (DOMContentLoaded already fired by
+  // the time scripts run, so we use a small minimum display time instead)
+  const MIN_SHOW_MS = 1500;
+  const startTime = Date.now();
+  function tryDismiss() {
+    const elapsed = Date.now() - startTime;
+    if (elapsed >= MIN_SHOW_MS) { dismiss(); }
+    else { setTimeout(dismiss, MIN_SHOW_MS - elapsed); }
+  }
+
+  if (document.readyState === 'complete') { tryDismiss(); }
+  else { window.addEventListener('load', tryDismiss); }
+})();
+</script>
+</body>
+</html>

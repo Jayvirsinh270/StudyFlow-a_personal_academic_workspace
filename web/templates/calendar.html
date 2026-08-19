@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Calendar</h1>
+    <p>Visualize events, exams, and holidays</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="openEventModal()">
+      <i data-lucide="plus"></i> Add Event
+    </button>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="flex gap-2" style="margin-bottom:16px;flex-wrap:wrap">
+  <span class="badge" style="background:rgba(59,130,246,0.15);color:#60A5FA;border-color:rgba(59,130,246,0.25)">● Personal</span>
+  <span class="badge" style="background:rgba(99,102,241,0.15);color:#818CF8;border-color:rgba(99,102,241,0.25)">● Academic</span>
+  <span class="badge badge-red">● Exam</span>
+  <span class="badge badge-green">● Holiday</span>
+  <span class="badge badge-orange">● Reminder</span>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div id="calendar"></div>
+  </div>
+</div>
+
+<!-- Add/Edit Event Modal -->
+<div id="event-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter">
+    <div class="modal-header">
+      <h3 id="event-modal-title">Add Event</h3>
+      <button class="modal-close" onclick="closeEventModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="event-edit-id">
+      <div class="input-group">
+        <label class="input-label">Event Title *</label>
+        <input type="text" class="input" id="event-title" placeholder="e.g. Mid-term Exam">
+      </div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label class="input-label">Date</label>
+          <input type="date" class="input" id="event-date">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Type</label>
+          <select class="input" id="event-type">
+            <option value="personal">Personal</option>
+            <option value="academic">Academic</option>
+            <option value="exam">Exam</option>
+            <option value="holiday">Holiday</option>
+            <option value="reminder">Reminder</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Description</label>
+        <textarea class="input" id="event-desc" placeholder="Optional details…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeEventModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEvent()">
+        <i data-lucide="save"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- View/Delete Event Modal -->
+<div id="event-view-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter" style="max-width:400px">
+    <div class="modal-header">
+      <h3 id="ev-view-title">Event</h3>
+      <button class="modal-close" onclick="closeEventViewModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body" id="ev-view-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="deleteEvent()"><i data-lucide="trash-2"></i> Delete</button>
+      <button class="btn btn-ghost" onclick="closeEventViewModal()">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

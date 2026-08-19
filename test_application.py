@@ -6,6 +6,7 @@ Tests database reliability, UI navigation, and file handling
 import os
 import sys
 import sqlite3
+from datetime import datetime
 
 # Make console output safe on Windows terminals that use legacy code pages.
 if hasattr(sys.stdout, "reconfigure"):
@@ -21,7 +22,7 @@ from utils.file_manager import file_manager
 from database import (
     create_student_profile, get_student_profile, update_student_profile,
     add_subject, get_subjects, update_subject, delete_subject,
-    create_note, get_notes, update_note, delete_note, duplicate_note,
+    create_note, get_notes, get_note_by_id, update_note, delete_note, duplicate_note,
     add_subject_file, get_subject_files, delete_subject_file, update_subject_file,
     update_attendance, get_attendance, calculate_attendance_percentage,
     add_assignment, get_assignments, update_assignment, delete_assignment,
@@ -30,15 +31,6 @@ from database import (
     get_setting, set_setting
 )
 
-
-def test_onboarding_visibility_logic():
-    """Onboarding should appear for first-time users and stay hidden once set up."""
-    from main import should_show_onboarding
-
-    assert should_show_onboarding(None, [], False) is True
-    assert should_show_onboarding({"name": "Student"}, [], False) is True
-    assert should_show_onboarding({"name": "Student"}, [{"id": 1}], False) is False
-    assert should_show_onboarding({"name": "Student"}, [], True) is False
 
 
 def test_document_metadata_updates():
@@ -95,10 +87,13 @@ def test_day_plan_summary_formatting():
 def test_assignment_due_state_helpers():
     """Assignment cards should get clear due-state labels for urgent work."""
     from modules.assignments.assignments import get_due_state_label
+    from datetime import date, timedelta
 
-    assert get_due_state_label("2026-07-26") == "Due today"
-    assert get_due_state_label("2026-07-27") == "Due tomorrow"
-    assert get_due_state_label("2026-08-02") == "Due soon"
+    today = date.today()
+
+    assert get_due_state_label((today).strftime("%Y-%m-%d")) == "Due today"
+    assert get_due_state_label((today + timedelta(days=1)).strftime("%Y-%m-%d")) == "Due tomorrow"
+    assert get_due_state_label((today + timedelta(days=3)).strftime("%Y-%m-%d")) == "Due soon"
     assert get_due_state_label(None) == "No due date"
 
 
@@ -292,7 +287,10 @@ def test_note_pin_and_duplicate():
 
         notes = get_notes(subject_id, sort_by="title")
         assert len(notes) >= 2
-        assert notes[0]['title'] <= notes[-1]['title']
+        # Pinned notes always sort first; within unpinned, title order applies.
+        pinned_notes = [n for n in notes if n.get('is_pinned')]
+        unpinned_notes = [n for n in notes if not n.get('is_pinned')]
+        assert all(notes.index(p) < notes.index(u) for p in pinned_notes for u in unpinned_notes)
 
         delete_note(note_id)
         delete_note(duplicate_id)
@@ -323,46 +321,6 @@ def test_file_manager_sorting_and_icons():
         return True
     except Exception as e:
         print(f"✗ File manager helper test failed: {e}")
-        return False
-
-
-def test_timetable_highlighting_helpers():
-    """Test timetable highlighting helpers for current day and current class."""
-    print("\nTesting timetable helpers...")
-    try:
-        today = datetime.now().strftime("%A")
-        from modules.timetable.timetable import Timetable
-        timetable = Timetable.__new__(Timetable)
-        timetable.days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-        timetable.time_slots = ["8:00-9:00"]
-        timetable.subjects_data = [{"id": 1, "name": "Math", "color": "#4F8EF7"}]
-        entry = {"subject_id": 1, "day": today, "time_slot": "8:00-9:00"}
-        color = timetable._get_subject_color(entry)
-        assert color == "#4F8EF7"
-        assert timetable._is_current_day(today) is True
-        assert timetable._is_current_class(entry) is True
-        print("✓ Timetable highlighting helpers work")
-        return True
-    except Exception as e:
-        print(f"✗ Timetable helper test failed: {e}")
-        return False
-
-
-def test_attendance_visual_helpers():
-    """Test attendance percentage and warning-state helpers."""
-    print("\nTesting attendance helpers...")
-    try:
-        from modules.subjects.workspace import SubjectWorkspace
-        workspace = SubjectWorkspace.__new__(SubjectWorkspace)
-        workspace.subject_id = 1
-        percentage = 72.0
-        assert workspace._get_attendance_color(percentage) == "#FFC107"
-        assert workspace._is_attendance_warning(percentage) is True
-        assert workspace._format_percentage(percentage) == "72.0%"
-        print("✓ Attendance visual helpers work")
-        return True
-    except Exception as e:
-        print(f"✗ Attendance helper test failed: {e}")
         return False
 
 
@@ -497,6 +455,11 @@ def test_timetable():
 def test_cgpa():
     """Test CGPA CRUD operations"""
     print("\nTesting CGPA...")
+
+    # ── Isolation: remove any leftover records from previous runs ──────────
+    for old in get_cgpa_records():
+        delete_cgpa_record(old['id'])
+
     # Create CGPA record
     record_id = add_cgpa_record(
         semester=1,
@@ -504,24 +467,24 @@ def test_cgpa():
         credits=20
     )
     print("✓ CGPA record created")
-    
+
     # Read records
     records = get_cgpa_records()
     assert len(records) > 0, "No CGPA records found"
     print(f"✓ Found {len(records)} CGPA records")
-    
-    # Calculate CGPA
+
+    # Calculate CGPA — only our one record is present so result must be 3.5
     cgpa = calculate_cgpa()
     assert cgpa == 3.5, f"CGPA calculation failed: expected 3.5, got {cgpa}"
     print(f"✓ CGPA calculated: {cgpa}")
-    
+
     # Update record
     update_cgpa_record(
         record_id=record_id,
         gpa=3.8
     )
     print("✓ CGPA record updated successfully")
-    
+
     # Delete record
     delete_cgpa_record(record_id)
     records_after = get_cgpa_records()

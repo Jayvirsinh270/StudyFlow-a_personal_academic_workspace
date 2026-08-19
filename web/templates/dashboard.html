@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Dashboard</h1>
+    <p id="dash-greeting">Good morning — here's your academic overview</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-ghost btn-sm" onclick="navigateTo('planner')">
+      <i data-lucide="calendar-days"></i> Planner
+    </button>
+    <button class="btn btn-primary btn-sm" onclick="navigateTo('assignments')">
+      <i data-lucide="plus"></i> New Assignment
+    </button>
+  </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="grid-4 stagger-children" id="stat-cards">
+  <div class="stat-card" style="--card-accent:#2563EB;--card-accent-subtle:rgba(37,99,235,0.12)">
+    <div class="stat-icon"><i data-lucide="book-open"></i></div>
+    <div class="stat-value" id="stat-subjects">—</div>
+    <div class="stat-label">Total Subjects</div>
+  </div>
+  <div class="stat-card" style="--card-accent:#F59E0B;--card-accent-subtle:rgba(245,158,11,0.12)">
+    <div class="stat-icon"><i data-lucide="check-square"></i></div>
+    <div class="stat-value" id="stat-pending">—</div>
+    <div class="stat-label">Pending Assignments</div>
+  </div>
+  <div class="stat-card" style="--card-accent:#22C55E;--card-accent-subtle:rgba(34,197,94,0.12)">
+    <div class="stat-icon"><i data-lucide="circle-check"></i></div>
+    <div class="stat-value" id="stat-attendance">—%</div>
+    <div class="stat-label">Overall Attendance</div>
+  </div>
+  <div class="stat-card" style="--card-accent:#7C3AED;--card-accent-subtle:rgba(124,58,237,0.12)">
+    <div class="stat-icon"><i data-lucide="trending-up"></i></div>
+    <div class="stat-value" id="stat-cgpa">—</div>
+    <div class="stat-label">Current CGPA</div>
+  </div>
+</div>
+
+<!-- Middle Row: CGPA ring + Today's Classes -->
+<div class="grid-2 mt-6" style="gap:20px">
+
+  <!-- CGPA Ring -->
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="trending-up" style="width:15px;height:15px;vertical-align:middle;margin-right:6px"></i>CGPA Overview</h3>
+      <button class="btn btn-ghost btn-sm" onclick="navigateTo('cgpa')">View Details</button>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:8px 0">
+
+        <!-- Ring -->
+        <div class="cgpa-ring-wrapper" style="flex-shrink:0">
+          <svg viewBox="0 0 180 180">
+            <circle class="cgpa-ring-bg" cx="90" cy="90" r="76"/>
+            <circle class="cgpa-ring-fill" id="cgpa-ring-fill" cx="90" cy="90" r="76"
+                    stroke="#2563EB" stroke-dasharray="477.5" stroke-dashoffset="477.5"/>
+          </svg>
+          <div class="cgpa-value-display">
+            <span class="cgpa-num" id="cgpa-big">—</span>
+            <span class="cgpa-lbl">CGPA</span>
+          </div>
+        </div>
+
+        <!-- Trend chart — fixed height wrapper STOPS the infinite grow loop -->
+        <div style="flex:1;min-width:120px;height:140px;position:relative">
+          <canvas id="cgpa-trend-chart"></canvas>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Classes -->
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="table-2" style="width:15px;height:15px;vertical-align:middle;margin-right:6px"></i>Today's Classes</h3>
+      <button class="btn btn-ghost btn-sm" onclick="navigateTo('timetable')">Full Timetable</button>
+    </div>
+    <div class="card-body card-body-flush" id="today-classes">
+      <div class="empty-state">
+        <div class="empty-icon"><i data-lucide="coffee"></i></div>
+        <h3>No classes today</h3>
+        <p>Enjoy your free day or use the Focus Timer!</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom Row: Due Soon + Recent Notes -->
+<div class="grid-2 mt-6" style="gap:20px">
+
+  <!-- Assignments Due Soon -->
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="clock" style="width:15px;height:15px;vertical-align:middle;margin-right:6px"></i>Due Soon</h3>
+      <button class="btn btn-ghost btn-sm" onclick="navigateTo('assignments')">All Assignments</button>
+    </div>
+    <div id="due-soon-list" class="card-body-flush">
+      <div class="empty-state">
+        <div class="empty-icon"><i data-lucide="party-popper"></i></div>
+        <h3>All caught up!</h3>
+        <p>No assignments due in the next 7 days.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Notes -->
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="notebook-pen" style="width:15px;height:15px;vertical-align:middle;margin-right:6px"></i>Recent Notes</h3>
+      <button class="btn btn-ghost btn-sm" onclick="navigateTo('notes')">All Notes</button>
+    </div>
+    <div id="recent-notes-list" class="card-body-flush">
+      <div class="empty-state">
+        <div class="empty-icon"><i data-lucide="notebook-pen"></i></div>
+        <h3>No notes yet</h3>
+        <p>Start taking notes from the Notes page.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+

@@ -1,8 +1,4 @@
-"""
-Assignments Module
-Centralized assignment management across all subjects
-"""
+"""Assignments Module"""
+from .assignments import get_due_state_label
 
-from .assignments import Assignments
-
-__all__ = ['Assignments']
+__all__ = ['get_due_state_label']

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Documents</h1>
+    <p>Manage files and resources by subject</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="uploadDocument()">
+      <i data-lucide="upload"></i> Upload File
+    </button>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-search">
+    <i data-lucide="search"></i>
+    <input type="text" id="doc-search" placeholder="Search files…" oninput="filterDocs(this.value)">
+  </div>
+  <select class="input" id="doc-subject-filter" onchange="filterDocs()" style="max-width:180px;height:34px">
+    <option value="all">All Subjects</option>
+  </select>
+  <div class="filter-tabs" id="doc-type-tabs">
+    <div class="filter-tab active" data-type="all" onclick="setDocType('all',this)">All</div>
+    <div class="filter-tab" data-type="PDF"   onclick="setDocType('PDF',this)">PDF</div>
+    <div class="filter-tab" data-type="Image" onclick="setDocType('Image',this)">Images</div>
+    <div class="filter-tab" data-type="Word"  onclick="setDocType('Word',this)">Word</div>
+    <div class="filter-tab" data-type="Other" onclick="setDocType('Other',this)">Other</div>
+  </div>
+</div>
+
+<div class="documents-grid stagger-children" id="docs-grid">
+  <div class="empty-state" style="grid-column:1/-1;padding:60px">
+    <div class="empty-icon"><i data-lucide="file-stack"></i></div>
+    <h3>No documents yet</h3>
+    <p>Upload your first file to get started.</p>
+    <button class="btn btn-primary mt-4" onclick="uploadDocument()">
+      <i data-lucide="upload"></i> Upload File
+    </button>
+  </div>
+</div>
+
+<!-- Upload Modal (after file selected) -->
+<div id="upload-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter" style="max-width:400px">
+    <div class="modal-header">
+      <h3>Confirm Upload</h3>
+      <button class="modal-close" onclick="closeUploadModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-secondary);font-size:13.5px">
+        Uploading: <strong id="upload-filename"></strong>
+      </p>
+      <div class="input-group" style="margin-top:12px">
+        <label class="input-label">Subject</label>
+        <select class="input" id="upload-subject"></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeUploadModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmUpload()">
+        <i data-lucide="upload"></i> Upload
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

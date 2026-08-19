@@ -59,10 +59,6 @@ from database.queries import (
     get_study_tasks,
     update_study_task,
     delete_study_task,
-    # Documents
-    add_document,
-    get_documents,
-    delete_document,
     # Settings
     get_setting,
     set_setting
@@ -115,9 +111,6 @@ __all__ = [
     'get_study_tasks',
     'update_study_task',
     'delete_study_task',
-    'add_document',
-    'get_documents',
-    'delete_document',
     'get_setting',
     'set_setting'
 ]

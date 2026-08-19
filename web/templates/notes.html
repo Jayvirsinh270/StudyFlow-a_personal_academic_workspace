@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Notes</h1>
+    <p>Create and manage subject-wise notes</p>
+  </div>
+  <div class="page-header-actions">
+    <button class="btn btn-primary" onclick="openNoteModal()">
+      <i data-lucide="plus"></i> New Note
+    </button>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-search">
+    <i data-lucide="search"></i>
+    <input type="text" id="note-search" placeholder="Search notes…" oninput="filterNotes(this.value)">
+  </div>
+  <select class="input" id="note-subject-filter" onchange="filterNotes()" style="max-width:200px;height:34px">
+    <option value="all">All Subjects</option>
+  </select>
+</div>
+
+<div class="notes-grid stagger-children" id="notes-grid">
+  <div class="empty-state" style="grid-column:1/-1;padding:60px">
+    <div class="empty-icon"><i data-lucide="notebook-pen"></i></div>
+    <h3>No notes yet</h3>
+    <p>Create your first note for any subject.</p>
+    <button class="btn btn-primary mt-4" onclick="openNoteModal()">
+      <i data-lucide="plus"></i> New Note
+    </button>
+  </div>
+</div>
+
+<!-- Note Editor Modal -->
+<div id="note-modal" class="modal-backdrop hidden">
+  <div class="modal modal-enter" style="max-width:640px">
+    <div class="modal-header">
+      <h3 id="note-modal-title">New Note</h3>
+      <button class="modal-close" onclick="closeNoteModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="note-edit-id">
+      <div class="grid-2">
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Title *</label>
+          <input type="text" class="input" id="note-title" placeholder="Note title…">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Subject</label>
+          <select class="input" id="note-subject"></select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Pin this note</label>
+          <div style="display:flex;align-items:center;gap:8px;padding-top:4px">
+            <label class="toggle-switch">
+              <input type="checkbox" id="note-pinned">
+              <span class="toggle-slider"></span>
+            </label>
+            <span style="font-size:12.5px;color:var(--text-muted)">Pinned notes appear first</span>
+          </div>
+        </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Content</label>
+          <textarea class="input" id="note-content" style="min-height:180px;resize:vertical" placeholder="Write your notes here…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="note-delete-btn" onclick="deleteNote()" style="margin-right:auto;display:none">
+        <i data-lucide="trash-2"></i> Delete
+      </button>
+      <button class="btn btn-ghost" onclick="closeNoteModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNote()">
+        <i data-lucide="save"></i> Save Note
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

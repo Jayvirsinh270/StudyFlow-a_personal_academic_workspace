@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Focus Timer</h1>
+    <p>Stay focused with the Pomodoro technique</p>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start">
+
+  <!-- Timer -->
+  <div class="card">
+    <div class="card-body">
+      <div class="pomodoro-container">
+
+        <!-- Mode tabs -->
+        <div class="timer-mode-tabs">
+          <button class="timer-mode-tab active" id="mode-work" onclick="setMode('work')">Work</button>
+          <button class="timer-mode-tab" id="mode-short" onclick="setMode('short')">Short Break</button>
+          <button class="timer-mode-tab" id="mode-long"  onclick="setMode('long')">Long Break</button>
+        </div>
+
+        <!-- Ring timer -->
+        <div class="timer-ring-wrapper">
+          <svg viewBox="0 0 240 240">
+            <circle class="timer-ring-bg"   cx="120" cy="120" r="108"/>
+            <circle class="timer-ring-fill ring-tick" id="timer-ring" cx="120" cy="120" r="108"
+                    stroke="#2563EB" stroke-dasharray="678.6" stroke-dashoffset="0"/>
+          </svg>
+          <div class="timer-display">
+            <div class="timer-time" id="timer-display">25:00</div>
+            <div class="timer-label" id="timer-mode-label">FOCUS</div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="timer-controls">
+          <button class="timer-btn timer-btn-secondary" onclick="resetTimer()" title="Reset">
+            <i data-lucide="rotate-ccw" style="width:20px;height:20px"></i>
+          </button>
+          <button class="timer-btn timer-btn-main" id="start-pause-btn" onclick="toggleTimer()">
+            <i data-lucide="play" id="play-icon" style="width:26px;height:26px"></i>
+          </button>
+          <button class="timer-btn timer-btn-secondary" onclick="skipSession()" title="Skip">
+            <i data-lucide="skip-forward" style="width:20px;height:20px"></i>
+          </button>
+        </div>
+
+        <!-- Session counter -->
+        <div class="flex gap-2 items-center">
+          <span style="font-size:12px;color:var(--text-muted)">Sessions today:</span>
+          <div class="flex gap-2" id="session-dots"></div>
+        </div>
+
+        <!-- Motivational quote -->
+        <div style="max-width:380px;text-align:center">
+          <p style="font-size:13px;color:var(--text-muted);font-style:italic" id="motivation-quote"></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings + Log -->
+  <div style="display:flex;flex-direction:column;gap:20px">
+
+    <!-- Timer settings -->
+    <div class="card">
+      <div class="card-header"><h3>Settings</h3></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+        <div class="input-group">
+          <label class="input-label">Work Duration (min)</label>
+          <input type="number" class="input" id="work-duration" value="25" min="1" max="90" onchange="updateDurations()">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Short Break (min)</label>
+          <input type="number" class="input" id="short-break" value="5" min="1" max="30" onchange="updateDurations()">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Long Break (min)</label>
+          <input type="number" class="input" id="long-break" value="15" min="1" max="60" onchange="updateDurations()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Session log -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Session Log</h3>
+        <button class="btn btn-ghost btn-sm" onclick="clearLog()">Clear</button>
+      </div>
+      <div class="card-body" style="padding:8px 16px" id="session-log">
+        <div class="empty-state" style="padding:20px">
+          <p style="font-size:12px;color:var(--text-muted)">No sessions recorded yet.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+
